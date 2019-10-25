@@ -1,4 +1,6 @@
 const User = require('../models/user');
+const { comparePassword } = require("../helpers/hash");
+const { signToken } = require('../helpers/jwt')
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -11,7 +13,7 @@ class UserController {
       User.findOne({ email })
         .then(user => {
           tempUser = user;
-          if(user && bcryptjs.compareSync(password, user.password)) {
+          if(user && comparePassword(password, user.password)) {
             return User.findByIdAndUpdate({_id: user._id},{status: true})
           } else {
             throw {msg: 'user/pass'}
@@ -23,15 +25,16 @@ class UserController {
             username: tempUser.username,
             email: tempUser.email
           }
-          const serverToken = jwt.sign(payload, 'learnSocketIo')
+          const serverToken = signToken(payload)
           res.status(200).json({token: serverToken, msg: 'Online'})
         })
         .catch(next)
     }
   }
   static register (req,res,next) {
-    const {email, password} = req.body;
-    if(email == undefined || password == undefined) throw {msg: 'zero'}
+    console.log(req.body)
+    const {username, email, password} = req.body;
+    if(username == undefined || email == undefined || password == undefined) throw {msg: 'zero'}
     else {
       User.create({email, password})
         .then(user => {

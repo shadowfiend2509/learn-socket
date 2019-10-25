@@ -2,18 +2,31 @@ const Mongoose = require('mongoose');
 const Schema = Mongoose.Schema;
 
 const RoomSchema = new Schema({
+  title: {
+    type: String,
+    required: true,
+    unique: true
+  },
   UserId: [
     {
       type: Schema.Types.ObjectId,
       ref: 'users'
     }
   ],
-  createdAt: Date
+  MsgId: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'messages'
+    }
+  ],
+  createdAt: String
 })
 
 RoomSchema.pre('save', function(next) {
   if(this.UserId.length < 5) {
-    this.createdAt = new Date()
+    this.MsgId = [];
+    const time = new Date();
+    this.createdAt =time.toLocaleString();
     next()
   } else {
     throw {msg: 'limit'}

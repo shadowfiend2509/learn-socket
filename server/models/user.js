@@ -29,6 +29,8 @@ UserSchema.pre('save', function(next) {
   const salt = bcryptjs.genSaltSync(10);
   this.password = bcryptjs.hashSync(this.password, salt)
   this.createdAt = new Date()
+  this.followers = [];
+  this.following = [];
   this.status = false;
   next()
 })

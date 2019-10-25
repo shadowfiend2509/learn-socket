@@ -17,7 +17,13 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-mongoose.connect(process.env.MONGO_URL)
+mongoose.connect(process.env.MONGO_URL,
+  { 
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false
+  }
+  )
   .then(_ => {
     console.log('MongoDb now Connected!')
   })
